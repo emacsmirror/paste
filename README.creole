@@ -1,0 +1,15 @@
+A pastebin with Elnode.
+
+This is very simple right now. I'm not sure where I'm going with it
+except it's a useful demonstration of what you can do with very little
+code.
+
+This doesn't quite function yet, the pastes should be stored in uuid'd
+files and the POST should cause a redirect to the file.
+
+Other things that would be good:
+
+* use emacs-db to store details so a user's paste's can be retrieved
+* allow comments on pastes
+* allow tweets on pastes
+* allow pastes to be edited with a live editing like feature (so they magically update)
