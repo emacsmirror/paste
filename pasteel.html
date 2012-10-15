@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>paste .el - pastebin</title>
+
+        <link rel="stylesheet" href="/pastel.css" type="text/css"/>
+    </head>
+<body>
+    <h1>Pastel - paste your code</h1>
+    <form method="POST" action="/paste/">
+        <textarea rows="10" cols="80" name="text" 
+                  placeholder="paste your code">
+        </textarea><br/>
+        <input type="text" name="type" value="" 
+               placeholder="what type of file is it?"/>
+        <input type="submit" name="paste" value="paste"/>
+    </form>
+</body>
+</html>
