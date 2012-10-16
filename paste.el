@@ -26,32 +26,55 @@
 
 (elnode-app pasteel/dir elnode esxml creole uuid)
 
+(defconst pasteel-store-dir "/tmp/pasteel")
+
+(defun pasteel-paste (httpcon)
+  "Serve a paste."
+  (let ((creole-text
+         (with-current-buffer
+             (find-file-noselect
+              (concat
+               (file-name-as-directory pasteel-store-dir)
+               (elnode-http-mapping httpcon 1)))
+           (buffer-substring-no-properties (point-min)(point-max)))))
+    (elnode-http-start httpcon 200 '(content-type . "text/html"))
+    (with-stdout-to-elnode httpcon
+        (creole-wiki
+         creole-text
+         :destination t
+         :body-header "<h1>Your paste</h1>"
+         :css (concat pasteel/dir "pasteel.css")))))
+
 (defun pasteel-bin (httpcon)
   (elnode-method httpcon
     (GET
      (elnode-send-file httpcon (concat pasteel/dir "pasteel.html")))
     (POST
-     (let* ((params (elnode-http-params httpcon "text" "type"))
-            (text (aget params "text"))
-            (type (aget params "type"))
+     (let* ((text (elnode-http-param httpcon "text"))
+            (type (elnode-http-param httpcon "type"))
             (uuid (uuid-string))
+            (file (concat (file-name-as-directory pasteel-store-dir) uuid))
+            ;; This could be useful for ensuring we don't repeat pastes?
+            (mac (base64-encode-string
+                  (hmac-sha1
+                   "test"
+                   (base64-encode-string text))))
             (creole-text
              (format
-              "= Your paste =\n\n{{{\n##! %s\n%s\n}}}\n"
+              "\n{{{\n##! %s\n%s\n}}}\n"
               type
               text)))
-       (elnode-http-start httpcon 200 `("Content-type" . "text/html"))
-       (with-stdout-to-elnode httpcon
-           (creole-wiki
-            creole-text
-            :destination t
-            :css (concat pasteel/dir "pasteel.css")))))))
+       (unless (file-exists-p pasteel-store-dir)
+         (make-directory pasteel-store-dir t))
+       (with-temp-file file (insert creole-text))
+       (elnode-send-redirect httpcon (concat "/pasteel/" uuid))))))
 
 (defun pasteel-handler (httpcon)
   (elnode-hostpath-dispatcher
    httpcon
    `(("^[^/]*//pasteel.css$"
       . ,(elnode-make-send-file (concat pasteel/dir "pasteel.css")))
+     ("^[^/]*//pasteel/\\([^/]+\\)$" . pasteel-paste)
      ("^[^/]*/.*" . pasteel-bin))))
 
 (provide 'pasteel)
