@@ -4,8 +4,7 @@ This is very simple right now. I'm not sure where I'm going with it
 except it's a useful demonstration of what you can do with very little
 code.
 
-This doesn't quite function yet, the pastes should be stored in uuid'd
-files and the POST should cause a redirect to the file.
+The pastes are stored in: {{{/tmp/pasteel/}}}
 
 Other things that would be good:
 
