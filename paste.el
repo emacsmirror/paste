@@ -1,4 +1,4 @@
-;;; past.el --- paste server with elnode
+;;; paste.el --- paste server with elnode
 
 ;; Copyright (C) 2012  Nic Ferrier
 
@@ -77,6 +77,6 @@
      ("^[^/]*//pasteel/\\([^/]+\\)$" . pasteel-paste)
      ("^[^/]*/.*" . pasteel-bin))))
 
-(provide 'pasteel)
+(provide 'paste)
 
-;;; past.el ends here
+;;; paste.el ends here
